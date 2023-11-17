@@ -1,31 +1,65 @@
+
+
+//Código do banco do Chico-Raniel
+
 import { Response, Request, NextFunction } from "express";
 import Student from "../models/Student";
 import { createDbConnection } from "../db/dbConfig";
 import { Database } from "sqlite3";
 import logger from "../services/logger";
+import createHttpError from "http-errors";
 
 let db: Database = createDbConnection();
+//const dbPromise = initializeDatabase();
+
+/*export const addStudentsHandler = async () => {
+    const db = await dbPromise;
+    let student: Student = req.body;
+    //let roomToUppercase: string = student.room.toUpperCase();
+    const studentsAdded = await db.all(`INSERT INTO students(name, shift, year, room) VALUES ("${student.name}", "${student.shift}", "${student.year}", "${roomToUppercase}")`);
+    return studentsAdded;
+  };*/
+
 
 const studentsRoot = (req: Request, res: Response, next: NextFunction) => {
     res.sendStatus(201);
 }
 
-const studentsList = (req: Request, res: Response) => {
+/*meu código de handler
+export const getAllStudentsHandler = async () => {
+    const db = await dbPromise;
+    const students = await db.all("SELECT * FROM students");
+    return students;
+  };*/
+
+  //handler do prof
+  const studentsListHandler = async() => {
     let studentsList: Student[] = [];
 
     let sql = `SELECT * FROM students`;
 
+    const promise = new Promise ((resolve,reject) => {
     db.all(sql, [], (error: Error, rows: Student[]) => {
         if (error) {
             logger.error(error.message);
-            res.send(error.message);
+            throw createHttpError.InternalServerError("Erro interno do servidor");
         }
-        rows.forEach((row: Student) => { studentsList.push(row) });
-        logger.info(req);
-        res.send(studentsList);
-    }
-    );
-}
+        rows.forEach((row: Student) => { 
+            studentsList.push(row);
+         });
+         resolve(studentsList);
+        });
+    });
+    return promise as Promise<Student[]>;
+};
+
+const studentsList = async (req: Request, res: Response) => {
+    const studentList = await studentsListHandler();
+
+    logger.info(req);
+
+    res.send(studentsList);
+};
 
 const studentsListByYearAndRoom = (req: Request, res: Response) => {
     logger.info(req);
@@ -187,5 +221,6 @@ export {
     updateStudent,
     updateStudentBySpecificField,
     deleteStudentByQuery,
-    deleteStudentByParams
+    deleteStudentByParams,
+    studentsListHandler
 };

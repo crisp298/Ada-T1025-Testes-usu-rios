@@ -1,10 +1,30 @@
+import { open } from "sqlite";
 import { Database, sqlite3 } from "sqlite3";
 
 const sqlite3 = require("sqlite3").verbose();
+
+const initializeDatabase = async () => {
+  const dbFilename =
+    process.env.NODE_ENV === "test"
+      ? "src/db/test_school.sqlite"
+      : "src/db/school.sqlite";
+
+   // createDbConnection(dbFilename)
+  return open({
+    filename: dbFilename,
+    driver: sqlite3.Database,
+  });
+};
+
+export default initializeDatabase;
+
+
+//Código do  Chico-Raniel
+
 const filePath: string = "src/db/school.db";
 
-const createDbConnection = () => {
-    let db: Database = new sqlite3.Database(filePath, (error: Error) => {
+const createDbConnection = (path = filePath) => {
+    let db: Database = new sqlite3.Database(path, (error: Error) => {
         if (error) {
             return console.error(error.message);
         }
