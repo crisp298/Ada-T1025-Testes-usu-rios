@@ -52,3 +52,35 @@ export interface IStudentsRepository {
         }
   }
 
+  export class fakeStudentsRepository implements fakeStudentsRepository {
+    async getStudents() {}
+    async createStudent(student: Student): Promise <Student> {
+      const dbPromise = initializeDatabase();
+      const db = await dbPromise;
+      await db.run(
+        `INSERT INTO students(name, shift, year, room) VALUES ("${student.name}","${student.shift}","${student.year}", "${student.room}")`,
+        [student.name, student.shift, student.year, student.room]
+    );
+    const newStudent = await db.get(
+        "SELECT * FROM students ORDER BY id DESC LIMIT 1",
+        [student.name, student.shift, student.year, student.room]
+      );
+
+    return newStudent as Student;
+    }
+
+    async deleteStudentsById(id: string): Promise<void> {
+        const dbPromise = initializeDatabase();
+        const db = await dbPromise;
+        return new Promise((resolve, reject) => {
+            const deleteQuery = 'DELETE FROM students WHERE id = ?';
+            db.run(deleteQuery, [id], (err: any) => {
+              if (err) {
+                reject(err);
+              } else {
+                resolve();
+              }
+            });
+          });
+        }
+  }

@@ -13,11 +13,13 @@
   "license": "ISC",
   "dependencies": {
     "@faker-js/faker": "^8.2.0",
+    "axios": "^1.6.2",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "http-errors": "^2.0.0",
     "pino": "^8.15.1",
+    "reflect-metadata": "^0.1.13",
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.6",
     "tsyringe": "^4.8.0"

@@ -3,11 +3,11 @@ import  Student from "../models/Student";
 import createHttpError from "http-errors";
 import { IStudentsRepository } from "../repositories/StudentsRepository";
 
-@injectable()
+@injectable
 export class CreateStudent
  {
   constructor(
-    @inject("StudentsRepository") private studentsRepository: IStudentsRepository){};
+    @inject("StudentsRepository") private StudentsRepository: IStudentsRepository){};
 
     async execute(student: Student){
         if(
@@ -17,7 +17,8 @@ export class CreateStudent
             !student.room ||
 
         ){
-            throw createHttpError.BadRequest("Propriedades obirgatórias ausentes no corpo da requisição.");
+        
+            throw createHttpError.BadRequest("Propriedades obirgatórias ausentes no corpo da requisição.")
         }
 
         const studentsDetails: any[] =[];
